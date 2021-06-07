@@ -2,10 +2,9 @@ package com.snakeandladder.model;
 
 import com.snakeandladder.exception.InvalidPositioning;
 
-import static com.snakeandladder.constants.ConstantUtils.INVALID_POSITION;
-import static com.snakeandladder.constants.ConstantUtils.SNAKE;
+import static com.snakeandladder.constants.ConstantUtils.*;
 
-public class Snake implements UnNamed{
+public class Snake implements Blocker {
 
     private Integer headPosition;
     private Integer tailPosition;
@@ -29,7 +28,12 @@ public class Snake implements UnNamed{
     @Override
     public void validatePositioning() throws InvalidPositioning {
         if (headPosition <= tailPosition) {
-            throw new InvalidPositioning(String.format(INVALID_POSITION, SNAKE));
+            throw new InvalidPositioning(String.format(INVALID_POSITION,
+                    SNAKE, String.format(MUST_BE_GREATER, "HEAD", "TAIL")));
         }
+    }
+
+    public String toString() {
+        return String.format("[%s, %d, %d]", SNAKE, headPosition, tailPosition);
     }
 }

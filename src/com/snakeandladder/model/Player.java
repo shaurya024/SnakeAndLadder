@@ -50,4 +50,8 @@ public class Player {
             throw new InvalidPlayerName();
         }
     }
+
+    public String toString() {
+        return String.format("[%s: %d]", playerName, positionOnBoard);
+    }
 }

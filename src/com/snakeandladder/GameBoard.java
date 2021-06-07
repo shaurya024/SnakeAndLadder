@@ -4,7 +4,7 @@ import com.snakeandladder.exception.PlayerAlreadyWon;
 import com.snakeandladder.exception.PositionUnavailable;
 import com.snakeandladder.model.Dice;
 import com.snakeandladder.model.Player;
-import com.snakeandladder.model.UnNamed;
+import com.snakeandladder.model.Blocker;
 import com.snakeandladder.validator.ValidateMove;
 
 import java.util.ArrayList;
@@ -15,12 +15,12 @@ import java.util.Map;
 public class GameBoard {
 
     private static GameBoard gameBoard;
-    private Map<Integer, UnNamed> unNamedOnBoard;
+    private Map<Integer, Blocker> mapOfBlocker;
     private List<Player> playerList;
     private ValidateMove validateMove;
 
     private GameBoard(){
-        unNamedOnBoard = new HashMap<>();
+        mapOfBlocker = new HashMap<>();
         playerList = new ArrayList<>();
         validateMove = new ValidateMove();
     }
@@ -32,12 +32,12 @@ public class GameBoard {
         return gameBoard;
     }
 
-    public void addOnBoard(UnNamed unNamed) throws PositionUnavailable {
-        Integer pointOfAction = unNamed.getPointOfAction();
-        if (unNamedOnBoard.containsKey(pointOfAction)) {
+    public void addBlocker(Blocker blocker) throws PositionUnavailable {
+        Integer pointOfAction = blocker.getPointOfAction();
+        if (mapOfBlocker.containsKey(pointOfAction)) {
             throw new PositionUnavailable(pointOfAction);
         }
-        unNamedOnBoard.put(pointOfAction, unNamed);
+        mapOfBlocker.put(pointOfAction, blocker);
     }
 
     public void addPlayer(Player player) {
@@ -60,19 +60,19 @@ public class GameBoard {
         }
 
         Boolean playerMoved = false;
-        Integer currPositionOfPlayer = player.getPositionOnBoard();
-        Integer updatedPositionOfPlayer = -1;
         while(!playerMoved) {
             Integer numberOnDice = Dice.rollDice();
             if (validateMove.isValidate(player, numberOnDice)) {
+                Integer currPositionOfPlayer = player.getPositionOnBoard();
                 player.movePlayer(numberOnDice);
-                updatedPositionOfPlayer = player.getPositionOnBoard();
-                if (unNamedOnBoard.containsKey(updatedPositionOfPlayer)) {
-                    UnNamed unNamed = unNamedOnBoard.get(updatedPositionOfPlayer);
-                    unNamed.applyOnPlayer(player);
+                Integer updatedPositionOfPlayer = player.getPositionOnBoard();
+                if (mapOfBlocker.containsKey(updatedPositionOfPlayer)) {
+                    Blocker blocker = mapOfBlocker.get(updatedPositionOfPlayer);
+                    blocker.applyOnPlayer(player);
+                    System.out.print(String.format("Blocker: %s is executed. ", blocker));
                 }
                 updatedPositionOfPlayer = player.getPositionOnBoard();
-                System.out.println(String.format("%s rolled a %d and moved from %d to %d",
+                System.out.println(String.format("%s rolled a %d and moved from %d to %d.",
                         player.getPlayerName(), numberOnDice, currPositionOfPlayer, updatedPositionOfPlayer));
                 playerMoved = true;
             }
